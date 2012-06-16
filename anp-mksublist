@@ -1,0 +1,37 @@
+#!/bin/sh
+# recursive find subtitle files in paths and place result in subs-files.list
+# usage: mk-subfiles.list [path...]
+find "${@:-.}" -iregex '.*\.\(srt\|ass\|ssa\)' | sort | tee subs-files.list
+
+############################################################
+#                     old variants                         #
+############################################################
+
+# variant 1
+# can't use custom path to subs
+#
+# ls | sed -ne '/\.\(srt\|ass\|ssa\)/P' > subs-files.list
+
+# variant 2
+# problemms with sed escapes
+#
+# dirn="${1:-.}"
+# sedexpr='s/^.*$/'"${dirn}"'\/\0/'
+# echo '"'"$sedexpr"'"'
+# ls "$dirn" | sed -ne '/\.\(srt\|ass\|ssa\)/P' | sed "$sedexpr" > subs-files.list
+
+# variant 3
+# gen redundant lines ( "$1/*.srt" "$1/*.ssa" )
+#
+# print-args "${1:-.}"/*.{srt,ass,ssa} > subs-files.list
+
+# variant 4
+# shell specific
+#
+# bash-only
+# shopt -s extglob
+# print-args "${1:-.}"/*.@(srt|ass|ssa) > subs-files.list
+#
+# zsh-only
+# print-args "${1:-.}"/*.(srt|ass|ssa) > subs-files.list
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+# recursive find video files in paths and place result in files.list
+# usage: mk-files.list [path...]
+find "${@:-.}" -iregex '.*\.\(mp4\|mkv\|avi\|wmv\)' | sort | tee files.list
+
+############################################################
+#                     old variants                         #
+############################################################
+
+# variant 1
+# don't work with multiple directories
+# dir="${1:-.}"
+# echo "add files from \"$dir\""
+# ls "$dir" | sed -ne '/\.\(mp4\|mkv\|avi\|wmv\)/P' >> files.list

@@ -1,0 +1,141 @@
+#!/bin/bash
+# comma in subtitle's file names isn't permitted
+
+#var
+msg_color='30;47'
+cur_num=0
+
+#functions
+function play_cur() {
+    [ ! -n "$cur_file" ] && return
+    sub_str=""
+    cur_sub=""
+    if [ -s "subs-files.list" ]; then
+	cur_sub="$(get_cur_sub $cur_num)"
+	sub_str='-sub "$cur_sub"'
+    fi
+    audio_str=""
+    cur_audio=""
+    if [ -s "audio-files.list" ]; then
+	cur_audio="$(get_cur_audio $cur_num)"
+	audion_str='-audiofile "$cur_audio"'
+    fi
+    command="mplayer $sub_str $audion_str \"\$cur_file\""
+    if [ -s "options.txt" ]; then
+	command="xargs $command < options.txt"
+    fi
+    eval "$command"
+    colored_echo "${msg_color}" "$colored_cur_file ($(( ${cur_num} + 1 ))/$(wc -l < files.list)) has played"
+    echo "$cur_file" > cur.txt
+}
+
+function get_cur_sub(){
+    cur_num=$1
+    head -n $((cur_num+1)) subs-files.list | tail -n 1
+}
+
+function get_cur_audio(){
+    cur_num=$1
+    head -n $((cur_num+1)) audio-files.list | tail -n 1
+}
+
+function set_cur_file(){
+    cur_file=$1
+    colored_cur_file="\033[30;42m${cur_file}\033[${msg_color}m"
+}
+
+function play_next(){
+    prev_file="$cur_file"
+    find_prev_next
+    set_cur_file "$next_file";
+    let cur_num++
+    echo $cur_num > .cur-num.txt
+    play_cur
+    find_prev_next
+}
+
+function find_prev_next(){
+    prev_file="";
+    cur_num=0
+    if [ -z "$cur_file" ] ; then
+	rm -f cur.txt
+	echo > .prev.txt
+	echo "$(head -n 1 files.list)" > .next.txt
+	echo -1 > .cur-num.txt 
+    else
+	cat files.list | while read fname; do
+	    if [ "$fname" == "$cur_file" ]; then
+		read fname
+		next_file="$fname"
+		echo "$next_file" > .next.txt
+		echo "$prev_file" > .prev.txt
+		echo $cur_num > .cur-num.txt
+		break
+	    fi
+	    prev_file="$fname"
+	    let cur_num++
+	done
+    fi
+    read next_file < .next.txt
+    colored_next_file="\033[30;42m${next_file}\033[${msg_color}m"
+    read prev_file < .prev.txt
+    read cur_num < .cur-num.txt
+}
+
+function move2prev() {
+    set_cur_file "$prev_file";
+    find_prev_next
+    [ -n "$cur_file" ] && \
+	echo "$cur_file" > cur.txt
+}
+
+function check_null_next_file() {
+    [ ! -n "$next_file" ] && colored_echo "${msg_color}" "files list has finised"
+}
+
+function check_null_prev_file() {
+    [ ! -n "$prev_file" ] && colored_echo "${msg_color}" "It is the first file in list"
+}
+
+function colored_echo(){
+#(color, message)
+    echo -e "\033[${1}m${2}\033[0m"
+}
+
+#body
+if [ ! -f files.list ]; then
+    colored_echo "${msg_color}" "file.list does not exist. creating..";
+    mk-files.list
+fi
+
+[ ! -f cur.txt ] && touch cur.txt
+if [ -s cur.txt ]; then
+    read cur_file < cur.txt
+    set_cur_file "$cur_file";
+    play_next
+else
+    set_cur_file "$(head -n 1 files.list)"
+    play_cur
+    find_prev_next
+fi
+check_null_next_file
+
+while :
+do
+    read -n 1 -p "next, current, previous or quit (n/c/p/q or enter insted of 'n')? " comm
+    [ -n "$comm" ] && echo 
+    comm="${comm:-n}"
+    case "$comm" in
+	"n") play_next
+	    check_null_next_file ;;
+	"q") rm -f .prev.txt .next.txt
+	    colored_echo "${msg_color}" "bye:)"
+	    break ;;
+	"p") move2prev
+	    colored_echo "${msg_color}" "Current file: ${colored_cur_file}";
+	    colored_echo "${msg_color}" "Next file:    ${colored_next_file}";
+	    check_null_prev_file ;;
+	"c") play_cur ;;
+	*) echo "incorrect input. reenter."
+    esac
+done
