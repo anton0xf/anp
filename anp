@@ -105,7 +105,7 @@ function colored_echo(){
 #body
 if [ ! -f files.list ]; then
     colored_echo "${msg_color}" "file.list does not exist. creating..";
-    mk-files.list
+    anp-mkflist
 fi
 
 [ ! -f cur.txt ] && touch cur.txt
