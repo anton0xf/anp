@@ -11,18 +11,19 @@ function play_cur() {
     sub_str=""
     cur_sub=""
     if [ -s "subs-files.list" ]; then
-	cur_sub="$(get_cur_sub $cur_num)"
-	sub_str='-sub "$cur_sub"'
+		cur_sub="$(get_cur_sub $cur_num)"
+		cur_sub="$(printf '%s' "$cur_sub" | sed 's/,/\\,/g')"
+		sub_str='-sub "$cur_sub"'
     fi
     audio_str=""
     cur_audio=""
     if [ -s "audio-files.list" ]; then
-	cur_audio="$(get_cur_audio $cur_num)"
-	audion_str='-audiofile "$cur_audio"'
+		cur_audio="$(get_cur_audio $cur_num)"
+		audion_str='-audiofile "$cur_audio"'
     fi
     command="mplayer $sub_str $audion_str \"\$cur_file\""
     if [ -s "options.txt" ]; then
-	command="xargs $command < options.txt"
+		command="xargs $command < options.txt"
     fi
     eval "$command"
     colored_echo "${msg_color}" "$colored_cur_file ($(( ${cur_num} + 1 ))/$(wc -l < files.list)) has played"
