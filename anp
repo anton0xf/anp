@@ -1,6 +1,9 @@
 #!/bin/bash
 # comma in subtitle's file names isn't permitted
 
+# args
+CUR_FPATH="${1:-cur.txt}"
+
 #var
 msg_color='30;47'
 cur_num=0
@@ -27,7 +30,7 @@ function play_cur() {
     fi
     eval "$command"
     colored_echo "${msg_color}" "$colored_cur_file ($(( ${cur_num} + 1 ))/$(wc -l < files.list)) has played"
-    echo "$cur_file" > cur.txt
+    echo "$cur_file" > "$CUR_FPATH"
 }
 
 function get_cur_sub(){
@@ -59,7 +62,7 @@ function find_prev_next(){
     prev_file="";
     cur_num=0
     if [ -z "$cur_file" ] ; then
-	rm -f cur.txt
+	rm -f "$CUR_FPATH"
 	echo > .prev.txt
 	echo "$(head -n 1 files.list)" > .next.txt
 	echo -1 > .cur-num.txt 
@@ -87,7 +90,7 @@ function move2prev() {
     set_cur_file "$prev_file";
     find_prev_next
     [ -n "$cur_file" ] && \
-	echo "$cur_file" > cur.txt
+	echo "$cur_file" > "$CUR_FPATH"
 }
 
 function check_null_next_file() {
@@ -109,9 +112,9 @@ if [ ! -f files.list ]; then
     anp-mkflist
 fi
 
-[ ! -f cur.txt ] && touch cur.txt
-if [ -s cur.txt ]; then
-    read cur_file < cur.txt
+[ ! -f "$CUR_FPATH" ] && touch "$CUR_FPATH"
+if [ -s "$CUR_FPATH" ]; then
+    read cur_file < "$CUR_FPATH"
     set_cur_file "$cur_file";
     play_next
 else

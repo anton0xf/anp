@@ -2,7 +2,7 @@
 # recursive find video files in paths and place result in files.list
 # remove ".part" suffix if exist.
 # usage: mk-files.list [path...]
-find "${@:-.}" -iregex '.*\.\(mp4\|mkv\|avi\|wmv\)\(\.part\)?' | \
+find "${@:-.}" -iregex '.*\.\(mp4\|mkv\|avi\|wmv\|mpg\)\(\.part\)?' | \
 	sed 's/\.part$//' | sort | tee files.list
 
 ############################################################
