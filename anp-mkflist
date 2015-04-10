@@ -3,7 +3,7 @@
 # remove ".part" suffix if exist.
 # usage: mk-files.list [path...]
 find "${@:-.}" -iregex '.*\.\(mp4\|mkv\|avi\|wmv\|mpg\)\(\.part\)?' | \
-	sed 's/\.part$//' | sort | tee files.list
+    sed 's/\.part$//' | sort | tee files.list
 
 ############################################################
 #                     old variants                         #

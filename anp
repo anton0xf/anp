@@ -14,19 +14,19 @@ function play_cur() {
     sub_str=""
     cur_sub=""
     if [ -s "subs-files.list" ]; then
-		cur_sub="$(get_cur_sub $cur_num)"
-		cur_sub="$(printf '%s' "$cur_sub" | sed 's/,/\\,/g')"
-		sub_str='-sub "$cur_sub"'
+        cur_sub="$(get_cur_sub $cur_num)"
+        cur_sub="$(printf '%s' "$cur_sub" | sed 's/,/\\,/g')"
+        sub_str='-sub "$cur_sub"'
     fi
     audio_str=""
     cur_audio=""
     if [ -s "audio-files.list" ]; then
-		cur_audio="$(get_cur_audio $cur_num)"
-		audion_str='-audiofile "$cur_audio"'
+        cur_audio="$(get_cur_audio $cur_num)"
+        audion_str='-audiofile "$cur_audio"'
     fi
     command="mplayer $sub_str $audion_str \"\$cur_file\""
     if [ -s "options.txt" ]; then
-		command="xargs $command < options.txt"
+        command="xargs $command < options.txt"
     fi
     eval "$command"
     colored_echo "${msg_color}" "$colored_cur_file ($(( ${cur_num} + 1 ))/$(wc -l < files.list)) has played"
@@ -62,23 +62,23 @@ function find_prev_next(){
     prev_file="";
     cur_num=0
     if [ -z "$cur_file" ] ; then
-	rm -f "$CUR_FPATH"
-	echo > .prev.txt
-	echo "$(head -n 1 files.list)" > .next.txt
-	echo -1 > .cur-num.txt 
+    rm -f "$CUR_FPATH"
+    echo > .prev.txt
+    echo "$(head -n 1 files.list)" > .next.txt
+    echo -1 > .cur-num.txt 
     else
-	cat files.list | while read fname; do
-	    if [ "$fname" == "$cur_file" ]; then
-		read fname
-		next_file="$fname"
-		echo "$next_file" > .next.txt
-		echo "$prev_file" > .prev.txt
-		echo $cur_num > .cur-num.txt
-		break
-	    fi
-	    prev_file="$fname"
-	    let cur_num++
-	done
+    cat files.list | while read fname; do
+        if [ "$fname" == "$cur_file" ]; then
+        read fname
+        next_file="$fname"
+        echo "$next_file" > .next.txt
+        echo "$prev_file" > .prev.txt
+        echo $cur_num > .cur-num.txt
+        break
+        fi
+        prev_file="$fname"
+        let cur_num++
+    done
     fi
     read next_file < .next.txt
     colored_next_file="\033[30;42m${next_file}\033[${msg_color}m"
@@ -90,7 +90,7 @@ function move2prev() {
     set_cur_file "$prev_file";
     find_prev_next
     [ -n "$cur_file" ] && \
-	echo "$cur_file" > "$CUR_FPATH"
+    echo "$cur_file" > "$CUR_FPATH"
 }
 
 function check_null_next_file() {
@@ -130,16 +130,16 @@ do
     [ -n "$comm" ] && echo 
     comm="${comm:-n}"
     case "$comm" in
-	"n") play_next
-	    check_null_next_file ;;
-	"q") rm -f .prev.txt .next.txt
-	    colored_echo "${msg_color}" "bye:)"
-	    break ;;
-	"p") move2prev
-	    colored_echo "${msg_color}" "Current file: ${colored_cur_file}";
-	    colored_echo "${msg_color}" "Next file:    ${colored_next_file}";
-	    check_null_prev_file ;;
-	"c") play_cur ;;
-	*) echo "incorrect input. reenter."
+        "n") play_next
+            check_null_next_file ;;
+        "q") rm -f .prev.txt .next.txt
+            colored_echo "${msg_color}" "bye:)"
+            break ;;
+        "p") move2prev
+            colored_echo "${msg_color}" "Current file: ${colored_cur_file}";
+            colored_echo "${msg_color}" "Next file:    ${colored_next_file}";
+            check_null_prev_file ;;
+        "c") play_cur ;;
+        *) echo "incorrect input. reenter."
     esac
 done
