@@ -15,8 +15,10 @@ function play_cur() {
     cur_sub=""
     if [ -s "subs-files.list" ]; then
         cur_sub="$(get_cur_sub $cur_num)"
-        cur_sub="$(printf '%s' "$cur_sub" | sed 's/,/\\,/g')"
-        sub_str='-sub "$cur_sub"'
+        if [ -n "$cur_sub" ]; then
+            cur_sub="$(printf '%s' "$cur_sub" | sed 's/,/\\,/g')"
+            sub_str='-sub "$cur_sub"'
+        fi
     fi
     audio_str=""
     cur_audio=""
