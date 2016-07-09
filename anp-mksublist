@@ -1,6 +1,6 @@
 #!/bin/sh
 # recursive find subtitle files in paths and place result in subs-files.list
-# usage: mk-subfiles.list [path...]
+# usage: mk-subfiles.list [path... [find_options...]]
 find "${@:-.}" -iregex '.*\.\(srt\|ass\|ssa\)' | sort | tee subs-files.list
 
 ############################################################
