@@ -1,7 +1,7 @@
 #!/bin/sh
 # recursive find video files in paths and place result in files.list
 # remove ".part" suffix if exist.
-# usage: mk-files.list [paths... [find_options...]]
+# Usage: anp-mkflist [PATH... [FIND_OPTION...]]
 find "${@:-.}" -iregex '.*\.\(mp4\|mkv\|avi\|wmv\|mpg\)\(\.part\)?' | \
     sed 's/\.part$//' | sort | tee files.list
 

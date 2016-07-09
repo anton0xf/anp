@@ -1,5 +1,4 @@
 #!/bin/bash
-# comma in subtitle's file names isn't permitted
 
 # args
 CUR_FPATH="${1:-cur.txt}"
@@ -103,8 +102,7 @@ function check_null_prev_file() {
     [ ! -n "$prev_file" ] && colored_echo "${msg_color}" "It is the first file in list"
 }
 
-function colored_echo(){
-#(color, message)
+function colored_echo(){ #(color, message)
     echo -e "\033[${1}m${2}\033[0m"
 }
 
@@ -128,7 +126,7 @@ check_null_next_file
 
 while :
 do
-    read -n 1 -p "next, current, previous or quit (n/c/p/q or enter insted of 'n')? " comm
+    read -n 1 -p "next, current, previous or quit (N/c/p/q)? " comm
     [ -n "$comm" ] && echo 
     comm="${comm:-n}"
     case "$comm" in
