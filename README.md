@@ -1,4 +1,4 @@
-Usefull for viewing serials. 
+Very simple cli mplayer wrapper usefull for viewing serials. 
 
 Place this repo somewhere in **$PATH** and just type in directory with series videos:
 ```sh
@@ -20,7 +20,9 @@ When **./files.list** and **./cur.txt** already exists it search **cur** video i
 * **previous** - press 'p' to reset current video to previous and print prompt.
 * **quit** - press 'q' to quit.
 
-For use separatly placed subtitles use **anp-mksublist**.
+For use separatly placed subtitles use **anp-mksublist** or just list paths to files in **./sub-files.list**.
+
+To pass additional options to mplayer use **anp-options** or just save  it in **./options.txt**.
 
 **License:** WTFPL
 
@@ -49,3 +51,6 @@ $ anp-mksublist
 # searh in Subs1 and ../Subbs2 dirs but not in its subdirs
 $ anp-mksublist Subs1 ../Subs2 -maxdepth 1
 ```
+
+#### anp-options
+Save it's arguments to **./options.txt**.
