@@ -3,9 +3,17 @@
 # args
 CUR_FPATH="${1:-cur.txt}"
 
+# env
+player="${ANPLAYER:-mplayer}"
+
 #var
 msg_color='30;47'
 cur_num=0
+
+opt_prefix_sub='-sub'
+if [ "$player" == 'mpv' ] ; then
+    opt_prefix_sub='--sub-file'
+fi
 
 #functions
 function play_cur() {
@@ -16,7 +24,7 @@ function play_cur() {
         cur_sub="$(get_cur_sub $cur_num)"
         if [ -n "$cur_sub" ]; then
             cur_sub="$(printf '%s' "$cur_sub" | sed 's/,/\\,/g')"
-            sub_str='-sub "$cur_sub"'
+            sub_str="$opt_prefix_sub"' "$cur_sub"'
         fi
     fi
     audio_str=""
@@ -25,7 +33,7 @@ function play_cur() {
         cur_audio="$(get_cur_audio $cur_num)"
         audion_str='-audiofile "$cur_audio"'
     fi
-    command="mplayer $sub_str $audion_str \"\$cur_file\""
+    command="$player $sub_str $audion_str \"\$cur_file\""
     if [ -s "options.txt" ]; then
         command="xargs $command < options.txt"
     fi
